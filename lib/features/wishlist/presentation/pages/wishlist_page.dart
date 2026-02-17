@@ -46,8 +46,7 @@ class _WishlistViewState extends State<WishlistView> {
                   const PopupMenuItem(
                     value: 'refresh',
                     child: ListTile(
-                      leading: Icon(Icons.refresh),
-                      title: Text('Refresh'),
+                      title: Text('Refresh Wishlist', style: TextStyle(color: Colors.black)),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
@@ -56,16 +55,15 @@ class _WishlistViewState extends State<WishlistView> {
                     const PopupMenuItem(
                       value: 'clear_all',
                       child: ListTile(
-                        leading: Icon(Icons.clear_all, color: Colors.red),
-                        title: Text('Clear All', style: TextStyle(color: Colors.red)),
+
+                        title: Text('Clear Wishlist', style: TextStyle(color: Colors.black)),
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
                   const PopupMenuItem(
                     value: 'stress_test',
                     child: ListTile(
-                      leading: Icon(Icons.speed),
-                      title: Text('Run Stress Test'),
+                      title: Text('Stress Test', style: TextStyle(color: Colors.red),),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
@@ -126,24 +124,19 @@ class _WishlistViewState extends State<WishlistView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.favorite_border,
-              size: 64,
-              color: Colors.grey,
-            ),
-            SizedBox(height: 16),
+          SizedBox(height: 16),
             Text(
               'Your wishlist is empty',
               style: TextStyle(
                 fontSize: 18,
-                color: Colors.grey,
+                color: Colors.black,
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 12),
             Text(
-              'Add countries from the main list to see them here',
+              'Add some European countries from the list to see them here',
               style: TextStyle(
-                color: Colors.grey,
+                color: Colors.black,
               ),
               textAlign: TextAlign.center,
             ),
@@ -152,7 +145,7 @@ class _WishlistViewState extends State<WishlistView> {
       );
     }
 
-    // Preload flag images for better scroll performance
+    // Pre carga de las banderas para una mejor performance al hacer scroll
     _preloadWishlistFlags(context, items);
 
     return RefreshIndicator(
@@ -160,8 +153,8 @@ class _WishlistViewState extends State<WishlistView> {
       child: ListView.builder(
         itemCount: items.length,
         padding: const EdgeInsets.symmetric(vertical: 8),
-        cacheExtent: 1000, // Prerender more items offscreen for smoother scrolling
-        itemExtent: 120, // Fixed height estimation for better performance
+        cacheExtent: 1000,
+        itemExtent: 120,
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
         ),
@@ -177,7 +170,7 @@ class _WishlistViewState extends State<WishlistView> {
     if (_flagsPreloaded) return;
     _flagsPreloaded = true;
 
-    // Extract flag URLs from wishlist items
+    // Extraigo las banderas de los items de la WishList
     final flagUrls = items.map((item) => item.flagUrl).toList();
     
     // Prioritize immediate precaching of visible items using Flutter's precacheImage
@@ -305,9 +298,9 @@ class _WishlistViewState extends State<WishlistView> {
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Clear All Items'),
+        title: const Text('Clear All European Countries'),
         content: const Text(
-          'Are you sure you want to remove all items from your wishlist? '
+          'Are you sure you want to remove all countries from your wishlist? '
           'This action cannot be undone.',
         ),
         actions: [
@@ -337,8 +330,6 @@ class _WishlistViewState extends State<WishlistView> {
         title: const Text('Performance Stress Test'),
         content: const Text(
           'This will add all European countries to the wishlist to test performance. '
-          'The operation will run in batches to prevent UI blocking. '
-          'Continue?',
         ),
         actions: [
           TextButton(

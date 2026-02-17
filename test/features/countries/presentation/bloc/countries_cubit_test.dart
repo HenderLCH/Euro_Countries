@@ -167,6 +167,18 @@ void main() {
           verify(() => mockRemoveFromWishlist('ESP')).called(1);
         },
       );
+
+      blocTest<CountriesCubit, CountriesState>(
+        'does nothing when state is not CountriesLoaded',
+        build: () => cubit,
+        act: (cubit) => cubit.toggleWishlist('ESP', 'Spain', 'https://flag.url/spain.png'),
+        expect: () => [],
+        verify: (_) {
+          verifyNever(() => mockAddToWishlist(any()));
+          verifyNever(() => mockRemoveFromWishlist(any()));
+        },
+      );
     });
   });
 }
+

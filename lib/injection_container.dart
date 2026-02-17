@@ -42,7 +42,10 @@ Future<void> init() async {
     ..registerLazySingleton(() => ClearWishlist(repository: sl()))
     ..registerLazySingleton(() => IsInWishlist(repository: sl()))
     ..registerLazySingleton(() => BatchCheckWishlistStatus(repository: sl()))
-    ..registerLazySingleton(() => PerformWishlistStressTest(repository: sl()))
+    ..registerLazySingleton(() => PerformWishlistStressTest(
+      wishlistRepository: sl(),
+      countryRepository: sl(),
+    ))
 
     // BLoCs (factories para crear nueva instancia cada vez)
     ..registerFactory(

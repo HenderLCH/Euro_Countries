@@ -55,48 +55,62 @@ class CountryDetailPage extends StatelessWidget {
 
             if (state is CountryDetailLoaded) {
               final country = state.country;
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Bandera
-                    Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          country.flagUrl,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(Icons.flag, size: 200),
-                        ),
+              return Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Card(
+                    elevation: 4,
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 600),
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Bandera
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                country.flagUrl,
+                                height: 180,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => const Icon(Icons.flag, size: 180),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          
+                          // Título
+                          Center(
+                            child: Text(
+                              country.name,
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          const Divider(),
+                          const SizedBox(height: 16),
+
+                          // Toda la información en un solo bloque
+                          _buildInfoRow(context, 'Capital', country.capital),
+                          _buildInfoRow(context, 'Region', country.region),
+                          _buildInfoRow(context, 'Population', _formatNumber(country.population)),
+                          if (country.area != null)
+                            _buildInfoRow(context, 'Area', '${_formatNumber(country.area!.toInt())} km²'),
+                          if (country.currencies != null)
+                            _buildInfoRow(context, 'Currencies', country.currencies!),
+                          if (country.languages != null)
+                            _buildInfoRow(context, 'Languages', country.languages!),
+                          if (country.timezones != null)
+                            _buildInfoRow(context, 'Timezones', country.timezones!),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 24),
-
-                    // Información básica
-                    _buildInfoCard(context, 'Basic Information', [
-                      _InfoRow(label: 'Official Name', value: country.name),
-                      _InfoRow(label: 'Capital', value: country.capital),
-                      _InfoRow(label: 'Region', value: country.region),
-                      _InfoRow(label: 'Population', value: _formatNumber(country.population)),
-                    ]),
-
-                    const SizedBox(height: 16),
-
-                    // Información adicional
-                    if (country.currencies != null || country.languages != null || country.area != null)
-                      _buildInfoCard(context, 'Additional Information', [
-                        if (country.currencies != null)
-                          _InfoRow(label: 'Currencies', value: country.currencies!),
-                        if (country.languages != null)
-                          _InfoRow(label: 'Languages', value: country.languages!),
-                        if (country.area != null)
-                          _InfoRow(label: 'Area', value: '${_formatNumber(country.area!.toInt())} km²'),
-                        if (country.timezones != null)
-                          _InfoRow(label: 'Timezones', value: country.timezones!),
-                      ]),
-                  ],
+                  ),
                 ),
               );
             }
@@ -108,47 +122,30 @@ class CountryDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard(BuildContext context, String title, List<_InfoRow> rows) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+  Widget _buildInfoRow(BuildContext context, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[700],
               ),
             ),
-            const SizedBox(height: 16),
-            ...rows.map((row) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      row.label,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      row.value,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-            )),
-          ],
-        ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -159,11 +156,4 @@ class CountryDetailPage extends StatelessWidget {
       (Match m) => '${m[1]},',
     );
   }
-}
-
-class _InfoRow {
-  final String label;
-  final String value;
-
-  _InfoRow({required this.label, required this.value});
 }

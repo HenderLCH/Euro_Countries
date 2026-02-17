@@ -1,5 +1,6 @@
 import 'package:euro_list/features/wishlist/domain/entities/wishlist_item.dart';
 import 'package:euro_list/features/wishlist/domain/repositories/wishlist_repository.dart';
+import 'package:euro_list/features/countries/domain/repositories/country_repository.dart';
 
 class GetWishlistItems {
 
@@ -82,22 +83,28 @@ class ClearWishlist {
 
 class PerformWishlistStressTest {
 
-  const PerformWishlistStressTest({required this.repository});
-  final WishlistRepository repository;
+  const PerformWishlistStressTest({
+    required this.wishlistRepository,
+    required this.countryRepository,
+  });
+  
+  final WishlistRepository wishlistRepository;
+  final CountryRepository countryRepository;
 
   Future<void> call() async {
-    // Este use case se encarga de ejecutar el stress test
-    // agregando todos los países europeos a la wishlist
+    // Obtener todos los países europeos reales de la API
+    final countries = await countryRepository.getEuropeanCountries();
     
-    // Crear items de prueba (simulando todos los países europeos)
-    final testItems = List.generate(50, (index) => WishlistItem(
-      id: 'STRESS_TEST_$index',
-      name: 'Test Country $index',
-      flagUrl: 'https://flagcdn.com/w320/eu.png',
+    // Convertir los países a WishlistItems
+    final wishlistItems = countries.map((country) => WishlistItem(
+      id: country.id,
+      name: country.name,
+      flagUrl: country.flagUrl,
       addedAt: DateTime.now(),
-    ));
+    )).toList();
 
-    return await repository.addAllStressTest(testItems);
+    // Agregar todos los países en lotes (anti-janks)
+    return await wishlistRepository.addAllStressTest(wishlistItems);
   
   }
 

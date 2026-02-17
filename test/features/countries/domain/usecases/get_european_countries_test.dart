@@ -4,7 +4,6 @@ import 'package:euro_list/features/countries/domain/entities/country.dart';
 import 'package:euro_list/features/countries/domain/repositories/country_repository.dart';
 import 'package:euro_list/features/countries/domain/usecases/get_european_countries.dart';
 
-// 1. Crear mock del repository
 class MockCountryRepository extends Mock implements CountryRepository {}
 
 void main() {
@@ -17,47 +16,76 @@ void main() {
   });
 
   group('GetEuropeanCountries', () {
-    // TEST 1: Caso de éxito
+    final tCountries = [
+      const Country(
+        id: 'ESP',
+        name: 'Spain',
+        capital: 'Madrid',
+        population: 47000000,
+        region: 'Europe',
+        flagUrl: 'https://flagcdn.com/es.svg',
+      ),
+      const Country(
+        id: 'FRA',
+        name: 'France',
+        capital: 'Paris',
+        population: 67000000,
+        region: 'Europe',
+        flagUrl: 'https://flagcdn.com/fr.svg',
+      ),
+    ];
+
     test('should return list of countries from repository', () async {
-      // Arrange (preparar)
-      // TODO: Crear lista de países de prueba
-      final tCountries = [
-        const Country(
-          id: 'ESP',
-          name: 'Spain',
-          capital: 'Madrid',
-          // ... resto de propiedades
-        ),
-      ];
-      
-      // TODO: Mockear la llamada al repository
+      // Arrange
       when(() => mockRepository.getEuropeanCountries())
           .thenAnswer((_) async => tCountries);
 
-      // Act (ejecutar)
-      // TODO: Llamar al use case
+      // Act
       final result = await usecase();
 
-      // Assert (verificar)
-      // TODO: Verificar que retorna la lista correcta
-      expect(result, tCountries);
+      // Assert
+      expect(result, equals(tCountries));
+      expect(result.length, 2);
+      expect(result.first.name, 'Spain');
+      verify(() => mockRepository.getEuropeanCountries()).called(1);
+      verifyNoMoreInteractions(mockRepository);
+    });
+
+    test('should throw exception when repository throws', () async {
+      // Arrange
+      final exception = Exception('Network error');
+      when(() => mockRepository.getEuropeanCountries()).thenThrow(exception);
+
+      // Act & Assert
+      expect(() => usecase(), throwsException);
       verify(() => mockRepository.getEuropeanCountries()).called(1);
     });
 
-    // TEST 2: Caso de error
-    test('should throw exception when repository throws', () async {
-      // TODO: Mockear que el repository lanza error
+    test('should return empty list when repository returns empty list', () async {
+      // Arrange
       when(() => mockRepository.getEuropeanCountries())
-          .thenThrow(Exception('Network error'));
+          .thenAnswer((_) async => []);
 
-      // TODO: Verificar que el use case lanza excepción
-      expect(() => usecase(), throwsException);
+      // Act
+      final result = await usecase();
+
+      // Assert
+      expect(result, isEmpty);
+      expect(result, isA<List<Country>>());
+      verify(() => mockRepository.getEuropeanCountries()).called(1);
     });
 
-    // TEST 3: Lista vacía
-    test('should return empty list when repository returns empty', () async {
-      // TODO: Mockear que retorna lista vacía
-      // TODO: Verificar que retorna lista vacía
+    test('should call repository method exactly once', () async {
+      // Arrange
+      when(() => mockRepository.getEuropeanCountries())
+          .thenAnswer((_) async => tCountries);
+
+      // Act
+      await usecase();
+
+      // Assert
+      verify(() => mockRepository.getEuropeanCountries()).called(1);
+      verifyNoMoreInteractions(mockRepository);
     });
   });
 }

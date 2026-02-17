@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+//Entidad para el pais en la wishlist
+
 class WishlistItem extends Equatable {
   const WishlistItem({
 

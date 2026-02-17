@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Inicializar inyección de dependencias
+  // Inicializo las dependencias
   await di.init();
   
   runApp(const EuroExplorerApp());

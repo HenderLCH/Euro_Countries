@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:euro_list/injection_container.dart' as di;
 import 'package:euro_list/features/countries/presentation/bloc/countries_cubit.dart';
 import 'package:euro_list/features/countries/presentation/bloc/countries_state.dart';
+import 'package:euro_list/features/countries/presentation/widgets/country_card.dart';
 import 'package:euro_list/features/wishlist/presentation/pages/wishlist_page.dart';
-import 'package:euro_list/features/countries/presentation/pages/country_detail_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class CountriesPage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _CountriesPageState extends State<CountriesPage> {
     if (_imagesPrecached) return;
     _imagesPrecached = true;
 
-    // Precachear las primeras 20 imágenes para scroll fluido
+    //Precachear las primeras 20 imagenes para hacer un scroll fluidio
     for (int i = 0; i < flagUrls.length && i < 20; i++) {
       final url = flagUrls[i];
       if (!url.toLowerCase().endsWith('.svg')) {
@@ -35,6 +35,8 @@ class _CountriesPageState extends State<CountriesPage> {
       }
     }
   }
+  
+//Pagina pincipal
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +74,6 @@ class _CountriesPageState extends State<CountriesPage> {
             }
             
             if (state is CountriesLoaded) {
-              // Precachear imágenes para mejor rendimiento
               _precacheImages(
                 context,
                 state.countries.map((c) => c.flagUrl).toList(),
@@ -80,10 +81,10 @@ class _CountriesPageState extends State<CountriesPage> {
               
               return GridView.builder(
                 padding: const EdgeInsets.all(16),
-                cacheExtent: 1000, // Pre-renderiza más items fuera de pantalla
+                cacheExtent: 1000,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 5, // 4 columnas
-                  childAspectRatio: 0.75, // Proporción ancho/alto
+                  crossAxisCount: 5,
+                  childAspectRatio: 0.75,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
@@ -92,119 +93,13 @@ class _CountriesPageState extends State<CountriesPage> {
                   final country = state.countries[index];
                   final isInWishlist = state.wishlistStatus[country.id] ?? false;
                   
-                  return Card(
-                    clipBehavior: Clip.antiAlias,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CountryDetailPage(
-                              countryName: country.name,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Bandera con caché optimizado
-                          Expanded(
-                            flex: 3,
-                            child: CachedNetworkImage(
-                              imageUrl: country.flagUrl,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                color: Colors.grey[200],
-                                child: const Center(
-                                  child: SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
-                                  ),
-                                ),
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                color: Colors.grey[300],
-                                child: const Center(
-                                  child: Icon(Icons.flag, size: 50, color: Colors.grey),
-                                ),
-                              ),
-                              memCacheWidth: 400, // Limita el ancho en memoria
-                              maxWidthDiskCache: 400, // Limita el ancho en disco
-                            ),
-                          ),
-                          // Información
-                          Expanded(
-                            flex: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    country.name,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    country.capital ?? 'No capital',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const Spacer(),
-                                  // Botón Add to Wishlist
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-                                        context.read<CountriesCubit>().toggleWishlist(
-                                          country.id,
-                                          country.name,
-                                          country.flagUrl,
-                                        );
-                                      },
-                                      icon: Icon(
-                                        isInWishlist ? Icons.check : Icons.add,
-                                        size: 16,
-                                      ),
-                                      label: Text(
-                                        isInWishlist ? 'Added' : 'Add to Wishlist',
-                                        style: const TextStyle(fontSize: 11),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 8,
-                                        ),
-                                        backgroundColor: isInWishlist 
-                                          ? Colors.green 
-                                          : Colors.orange,
-                                        foregroundColor: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  return CountryCard(
+                    country: country,
+                    isInWishlist: isInWishlist,
                   );
                 },
               );
             }
-            
             return const SizedBox();
           },
         ),

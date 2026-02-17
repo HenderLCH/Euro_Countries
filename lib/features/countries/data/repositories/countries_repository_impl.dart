@@ -3,6 +3,8 @@ import 'package:euro_list/features/countries/data/models/country_dto.dart';
 import 'package:euro_list/features/countries/domain/entities/country.dart';
 import 'package:euro_list/features/countries/domain/repositories/country_repository.dart';
 
+//Repositorio para la obtencion de los paises europeos y un pais por nombre
+
 class CountryRepositoryImpl implements CountryRepository {
 
   final RestCountriesApi api;

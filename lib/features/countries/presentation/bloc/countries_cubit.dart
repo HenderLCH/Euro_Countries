@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:euro_list/features/wishlist/domain/entities/wishlist_item.dart';
 import 'package:euro_list/features/wishlist/domain/repositories/wishlist_repository.dart';
 import 'package:euro_list/features/countries/domain/usecases/get_european_countries.dart';
 import 'package:euro_list/features/wishlist/domain/usecases/manage_wishlist.dart';
 import 'package:euro_list/features/countries/presentation/bloc/countries_state.dart';
+
+  //BloC para  obtener los paises europeos y el estado de la wishlist
 
 class CountriesCubit extends Cubit<CountriesState> {
   CountriesCubit({
@@ -12,13 +15,17 @@ class CountriesCubit extends Cubit<CountriesState> {
     required this.addToWishlist,
     required this.removeFromWishlist,
     required this.wishlistRepository,
-  }) : super(CountriesInitial());
+  }) : super(CountriesInitial()) {
+    _wishlistSubscription = wishlistRepository.wishlistChanges.listen(_onWishlistChanged);
+  }
 
   final GetEuropeanCountries getEuropeanCountries;
   final BatchCheckWishlistStatus batchCheckWishlistStatus;
   final AddToWishlist addToWishlist;
   final RemoveFromWishlist removeFromWishlist;
   final WishlistRepository wishlistRepository;
+
+  StreamSubscription<WishlistChangeEvent>? _wishlistSubscription;
 
   Future<void> loadCountries() async {
     emit(CountriesLoading());
@@ -51,7 +58,7 @@ class CountriesCubit extends Cubit<CountriesState> {
         ));
       }
 
-      // Actualizar estado local
+      // Actualizar el estado de la wishlist
       final updatedStatus = Map<String, bool>.from(currentState.wishlistStatus);
       updatedStatus[countryId] = !isInWishlist;
       
@@ -60,5 +67,37 @@ class CountriesCubit extends Cubit<CountriesState> {
         wishlistStatus: updatedStatus,
       ));
     }
+  }
+
+  void _onWishlistChanged(WishlistChangeEvent event) {
+    final currentState = state;
+    if (currentState is CountriesLoaded) {
+      final updatedStatus = Map<String, bool>.from(currentState.wishlistStatus);
+      
+      switch (event.type) {
+        case WishlistChangeType.added:
+          updatedStatus[event.countryId] = true;
+          break;
+        case WishlistChangeType.removed:
+          updatedStatus[event.countryId] = false;
+          break;
+        case WishlistChangeType.cleared:
+          for (final key in updatedStatus.keys) {
+            updatedStatus[key] = false;
+          }
+          break;
+      }
+      
+      emit(CountriesLoaded(
+        countries: currentState.countries,
+        wishlistStatus: updatedStatus,
+      ));
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _wishlistSubscription?.cancel();
+    return super.close();
   }
 }

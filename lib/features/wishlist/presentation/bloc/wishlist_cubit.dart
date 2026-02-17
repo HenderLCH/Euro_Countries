@@ -9,7 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'wishlist_state.dart';
 
-/// Cubit for managing wishlist screen state
+// Cubit para manejar el estado de la wishlist
+
 class WishlistCubit extends Cubit<WishlistState> {
   WishlistCubit({
     required GetWishlistItems getWishlistItems,
@@ -23,7 +24,6 @@ class WishlistCubit extends Cubit<WishlistState> {
         _performStressTest = performStressTest,
         _wishlistRepository = wishlistRepository,
         super(const WishlistInitial()) {
-    // Listen to wishlist changes for real-time updates
     _wishlistSubscription =
         _wishlistRepository.wishlistChanges.listen(_onWishlistChanged);
   }
@@ -36,7 +36,7 @@ class WishlistCubit extends Cubit<WishlistState> {
 
   StreamSubscription<WishlistChangeEvent>? _wishlistSubscription;
 
-  /// Load wishlist items
+  //Cargar los paises de la wishlist
   Future<void> loadWishlist() async {
     emit(const WishlistLoading());
 
@@ -48,38 +48,32 @@ class WishlistCubit extends Cubit<WishlistState> {
     }
   }
 
-  /// Remove item from wishlist
   Future<void> removeItem(String countryId) async {
     final currentState = state;
 
-    // Extract current items from different state types
     List<WishlistItem>? currentItems;
     if (currentState is WishlistLoaded) {
       currentItems = currentState.items;
     } else if (currentState is WishlistStressTestCompleted) {
       currentItems = currentState.items;
     } else {
-      return; // No items to remove from
+      return;
     }
 
     try {
       await _removeFromWishlist(countryId);
 
-      // Update local state
       final updatedItems =
           currentItems.where((item) => item.id != countryId).toList();
 
-      // Always transition to regular loaded state after manual operations
-      // The stress test completion state should only show once
       emit(WishlistLoaded(items: updatedItems));
     } catch (e) {
       emit(WishlistError(message: 'Failed to remove item: $e'));
-      // Restore previous state after showing error
       emit(currentState);
     }
   }
 
-  /// Run stress test with all European countries
+// Stress Test para todos los paises europeos
   Future<void> runStressTest() async {
     emit(const WishlistStressTestRunning());
 
@@ -88,7 +82,6 @@ class WishlistCubit extends Cubit<WishlistState> {
       await _performStressTest();
       stopwatch.stop();
 
-      // Reload items to show the results
       final items = await _getWishlistItems();
       emit(
         WishlistStressTestCompleted(
@@ -101,7 +94,6 @@ class WishlistCubit extends Cubit<WishlistState> {
     }
   }
 
-  /// Clear all items from wishlist
   Future<void> clearWishlist() async {
     try {
       await _clearWishlist();
@@ -111,44 +103,35 @@ class WishlistCubit extends Cubit<WishlistState> {
     }
   }
 
-  /// Refresh wishlist
   Future<void> refresh() async {
     await loadWishlist();
   }
 
-  /// Handle wishlist changes from other parts of the app
   void _onWishlistChanged(WishlistChangeEvent event) {
     final currentState = state;
 
-    // Extract current items from different state types
     List<WishlistItem>? currentItems;
     if (currentState is WishlistLoaded) {
       currentItems = currentState.items;
     } else if (currentState is WishlistStressTestCompleted) {
       currentItems = currentState.items;
     } else {
-      return; // No items to update
+      return;
     }
 
     switch (event.type) {
       case WishlistChangeType.added:
         if (event.countryId == '*BATCH*') {
-          // Handle batch operations by reloading the entire list
           loadWishlist();
           return;
         }
-        // For individual additions, transition to regular loaded state
-        // The stress test completion state should only show once
         loadWishlist();
       case WishlistChangeType.removed:
-        // Remove the item from current state and transition to regular loaded state
-        // Any operation after stress test should return to normal state
         final updatedItems =
             currentItems.where((item) => item.id != event.countryId).toList();
 
         emit(WishlistLoaded(items: updatedItems));
       case WishlistChangeType.cleared:
-        // Clear all items and transition to regular loaded state
         emit(const WishlistLoaded(items: []));
     }
   }

@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:euro_list/injection_container.dart' as di;
 import 'package:euro_list/features/countries/presentation/bloc/country_detail_cubit.dart';
 import 'package:euro_list/features/countries/presentation/bloc/country_detail_state.dart';
+import 'package:euro_list/features/countries/presentation/widgets/country_info_row.dart';
 import 'package:euro_list/core/widgets/loading_widget.dart';
 import 'package:euro_list/core/widgets/error_widget.dart';
 
+// Vista detallada de los paises
 class CountryDetailPage extends StatelessWidget {
   const CountryDetailPage({
     super.key,
@@ -67,7 +69,6 @@ class CountryDetailPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Bandera
                           Center(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
@@ -81,7 +82,6 @@ class CountryDetailPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 24),
                           
-                          // Título
                           Center(
                             child: Text(
                               country.name,
@@ -95,18 +95,17 @@ class CountryDetailPage extends StatelessWidget {
                           const Divider(),
                           const SizedBox(height: 16),
 
-                          // Toda la información en un solo bloque
-                          _buildInfoRow(context, 'Capital', country.capital),
-                          _buildInfoRow(context, 'Region', country.region),
-                          _buildInfoRow(context, 'Population', _formatNumber(country.population)),
+                          CountryInfoRow(label: 'Capital', value: country.capital),
+                          CountryInfoRow(label: 'Region', value: country.region),
+                          CountryInfoRow(label: 'Population', value: _formatNumber(country.population)),
                           if (country.area != null)
-                            _buildInfoRow(context, 'Area', '${_formatNumber(country.area!.toInt())} km²'),
+                            CountryInfoRow(label: 'Area', value: '${_formatNumber(country.area!.toInt())} km²'),
                           if (country.currencies != null)
-                            _buildInfoRow(context, 'Currencies', country.currencies!),
+                            CountryInfoRow(label: 'Currencies', value: country.currencies!),
                           if (country.languages != null)
-                            _buildInfoRow(context, 'Languages', country.languages!),
+                            CountryInfoRow(label: 'Languages', value: country.languages!),
                           if (country.timezones != null)
-                            _buildInfoRow(context, 'Timezones', country.timezones!),
+                            CountryInfoRow(label: 'Timezones', value: country.timezones!),
                         ],
                       ),
                     ),
@@ -121,35 +120,7 @@ class CountryDetailPage extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildInfoRow(BuildContext context, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[700],
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+  
   String _formatNumber(int number) {
     return number.toString().replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),

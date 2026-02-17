@@ -34,7 +34,6 @@ class CountryDetailCubit extends Cubit<CountryDetailState> {
         isInWishlist: inWishlist,
       ));
 
-      // Listen to wishlist changes
       _wishlistSubscription = wishlistRepository.wishlistChanges.listen((event) {
         final currentState = state;
         if (currentState is CountryDetailLoaded) {
@@ -67,7 +66,6 @@ class CountryDetailCubit extends Cubit<CountryDetailState> {
         ));
       }
 
-      // Update local state immediately
       emit(currentState.copyWith(isInWishlist: !isCurrentlyInWishlist));
     }
   }

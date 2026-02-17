@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+//Entidad para pais
+
 class Country extends Equatable {
   const Country({
 

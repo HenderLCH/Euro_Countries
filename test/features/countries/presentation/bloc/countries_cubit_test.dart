@@ -38,17 +38,16 @@ void main() {
     mockRemoveFromWishlist = MockRemoveFromWishlist();
     mockWishlistRepository = MockWishlistRepository();
 
+    when(() => mockWishlistRepository.wishlistChanges).thenAnswer(
+      (_) => const Stream.empty(),
+    );
+
     cubit = CountriesCubit(
       getEuropeanCountries: mockGetEuropeanCountries,
       batchCheckWishlistStatus: mockBatchCheckWishlistStatus,
       addToWishlist: mockAddToWishlist,
       removeFromWishlist: mockRemoveFromWishlist,
       wishlistRepository: mockWishlistRepository,
-    );
-
-    // Setup default stream
-    when(() => mockWishlistRepository.wishlistChanges).thenAnswer(
-      (_) => const Stream.empty(),
     );
   });
 

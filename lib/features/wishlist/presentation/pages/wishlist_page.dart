@@ -9,7 +9,8 @@ import 'package:euro_list/core/widgets/smart_flag_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Page displaying user's wishlist of countries
+//Pagina para mostrar la wishlist de los paises
+
 class WishlistPage extends StatelessWidget {
   const WishlistPage({super.key});
 
@@ -145,7 +146,8 @@ class _WishlistViewState extends State<WishlistView> {
       );
     }
 
-    // Pre carga de las banderas para una mejor performance al hacer scroll
+    // Pre carga de las banderas
+
     _preloadWishlistFlags(context, items);
 
     return RefreshIndicator(
@@ -170,15 +172,12 @@ class _WishlistViewState extends State<WishlistView> {
     if (_flagsPreloaded) return;
     _flagsPreloaded = true;
 
-    // Extraigo las banderas de los items de la WishList
     final flagUrls = items.map((item) => item.flagUrl).toList();
     
-    // Prioritize immediate precaching of visible items using Flutter's precacheImage
     _precacheVisibleFlags(context, flagUrls.take(8).toList());
   }
 
   void _precacheVisibleFlags(BuildContext context, List<String> flagUrls) {
-    // Use Flutter's built-in precacheImage for immediate caching of visible items
     for (final url in flagUrls) {
       if (!url.toLowerCase().endsWith('.svg')) {
         precacheImage(

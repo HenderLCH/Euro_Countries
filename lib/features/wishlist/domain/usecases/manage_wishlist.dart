@@ -92,10 +92,10 @@ class PerformWishlistStressTest {
   final CountryRepository countryRepository;
 
   Future<void> call() async {
-    // Obtener todos los países europeos reales de la API
+    //Obtener todos los paises europeos reales de la API
     final countries = await countryRepository.getEuropeanCountries();
     
-    // Convertir los países a WishlistItems
+    //Convertir los paises a WishlistItems
     final wishlistItems = countries.map((country) => WishlistItem(
       id: country.id,
       name: country.name,
@@ -103,7 +103,7 @@ class PerformWishlistStressTest {
       addedAt: DateTime.now(),
     )).toList();
 
-    // Agregar todos los países en lotes (anti-janks)
+    //Agregar todos los paises en lotes (anti-janks)
     return await wishlistRepository.addAllStressTest(wishlistItems);
   
   }

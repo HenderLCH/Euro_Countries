@@ -1,6 +1,5 @@
 part of 'wishlist_cubit.dart';
 
-/// State for wishlist screen
 @immutable
 sealed class WishlistState extends Equatable {
   const WishlistState();
@@ -9,17 +8,14 @@ sealed class WishlistState extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Initial state
 final class WishlistInitial extends WishlistState {
   const WishlistInitial();
 }
 
-/// Loading state
 final class WishlistLoading extends WishlistState {
   const WishlistLoading();
 }
 
-/// Success state with wishlist items
 final class WishlistLoaded extends WishlistState {
   const WishlistLoaded({
     required this.items,
@@ -39,7 +35,6 @@ final class WishlistLoaded extends WishlistState {
   }
 }
 
-/// Error state
 final class WishlistError extends WishlistState {
   const WishlistError({required this.message});
 
@@ -49,12 +44,10 @@ final class WishlistError extends WishlistState {
   List<Object?> get props => [message];
 }
 
-/// Stress test running state
 final class WishlistStressTestRunning extends WishlistState {
   const WishlistStressTestRunning();
 }
 
-/// Stress test completed state
 final class WishlistStressTestCompleted extends WishlistState {
   const WishlistStressTestCompleted({
     required this.items,

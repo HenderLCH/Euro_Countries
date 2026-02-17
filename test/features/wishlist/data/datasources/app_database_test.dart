@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:euro_list/features/wishlist/data/datasources/app_database.dart';
-import 'package:euro_list/features/wishlist/domain/entities/wishlist_item.dart';
 import 'package:drift/native.dart';
 
 void main() {
@@ -16,14 +15,14 @@ void main() {
   });
 
   group('AppDatabase - Wishlist CRUD Operations', () {
-    final tWishlistItem = WishlistItem(
+    final tWishlistItem = WishlistItemData(
       id: 'ESP',
       name: 'Spain',
       flagUrl: 'https://flagcdn.com/w320/es.png',
       addedAt: DateTime(2024, 1, 1),
     );
 
-    final tWishlistItem2 = WishlistItem(
+    final tWishlistItem2 = WishlistItemData(
       id: 'FRA',
       name: 'France',
       flagUrl: 'https://flagcdn.com/w320/fr.png',
@@ -48,7 +47,7 @@ void main() {
         await database.addToWishlist(tWishlistItem);
 
         // Act - Agregar mismo item con nombre diferente
-        final updatedItem = WishlistItem(
+        final updatedItem = WishlistItemData(
           id: 'ESP',
           name: 'España', // Nombre actualizado
           flagUrl: 'https://flagcdn.com/w320/es.png',
@@ -212,7 +211,7 @@ void main() {
         // Arrange - Crear 50 items
         final items = List.generate(
           50,
-          (index) => WishlistItem(
+          (index) => WishlistItemData(
             id: 'COUNTRY_$index',
             name: 'Country $index',
             flagUrl: 'https://flagcdn.com/w320/country$index.png',

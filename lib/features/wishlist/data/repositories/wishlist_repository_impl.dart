@@ -3,6 +3,8 @@ import 'package:euro_list/features/wishlist/data/datasources/app_database.dart';
 import 'package:euro_list/features/wishlist/domain/entities/wishlist_item.dart';
 import 'package:euro_list/features/wishlist/domain/repositories/wishlist_repository.dart';
 
+//Repositorio para la wishlist 
+
 class WishlistRepositoryImpl implements WishlistRepository {
   WishlistRepositoryImpl({required AppDatabase database}) 
       : _database = database;
@@ -14,19 +16,37 @@ class WishlistRepositoryImpl implements WishlistRepository {
   @override
   Stream<WishlistChangeEvent> get wishlistChanges => _changeController.stream;
 
+//Obtener los paises de la wishlist 
+
   @override
   Future<List<WishlistItem>> getWishlistItems() async {
-    return await _database.getAllWishlistItems();
+    final dtoList = await _database.getAllWishlistItems();
+    return dtoList.map((dto) => WishlistItem(
+      id: dto.id,
+      name: dto.name,
+      flagUrl: dto.flagUrl,
+      addedAt: dto.addedAt,
+    )).toList();
   }
+
+//Agregar un pais a la wishlist 
 
   @override
   Future<void> addToWishlist(WishlistItem item) async {
-    await _database.addToWishlist(item);
+    final dto = WishlistItemData(
+      id: item.id,
+      name: item.name,
+      flagUrl: item.flagUrl,
+      addedAt: item.addedAt,
+    );
+    await _database.addToWishlist(dto);
     _changeController.add(WishlistChangeEvent(
       type: WishlistChangeType.added,
       countryId: item.id,
     ));
   }
+
+//Eliminar uun pais de la wishlist 
 
   @override
   Future<void> removeFromWishlist(String countryId) async {
@@ -37,10 +57,13 @@ class WishlistRepositoryImpl implements WishlistRepository {
     ));
   }
 
+// Validar si un pais esta en la wishlist
   @override
   Future<bool> isInWishlist(String countryId) async {
     return await _database.isInWishlist(countryId);
   }
+
+//Limpiar la wishlist 
 
   @override
   Future<void> clearWishlist() async {
@@ -61,17 +84,24 @@ class WishlistRepositoryImpl implements WishlistRepository {
     return await _database.batchCheckWishlistStatus(countryIds);
   }
 
+//Agregar todos los paises para el Stress Test
+
   @override
   Future<void> addAllStressTest(List<WishlistItem> items) async {
-    // Procesar en chunks para evitar janks
+    final dtoItems = items.map((item) => WishlistItemData(
+      id: item.id,
+      name: item.name,
+      flagUrl: item.flagUrl,
+      addedAt: item.addedAt,
+    )).toList();
+    
     const chunkSize = 100;
-    for (var i = 0; i < items.length; i += chunkSize) {
-      final end = (i + chunkSize < items.length) ? i + chunkSize : items.length;
-      final chunk = items.sublist(i, end);
+    for (var i = 0; i < dtoItems.length; i += chunkSize) {
+      final end = (i + chunkSize < dtoItems.length) ? i + chunkSize : dtoItems.length;
+      final chunk = dtoItems.sublist(i, end);
       await _database.batchInsertWishlistItems(chunk);
       
-      // Pequeño delay para no bloquear la UI
-      if (i + chunkSize < items.length) {
+      if (i + chunkSize < dtoItems.length) {
         await Future.delayed(const Duration(milliseconds: 10));
       }
     }

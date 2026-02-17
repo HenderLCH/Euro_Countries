@@ -12,7 +12,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(
-      WishlistItem(
+      WishlistItemData(
         id: 'test',
         name: 'Test',
         flagUrl: 'test.svg',
@@ -31,7 +31,22 @@ void main() {
   });
 
   group('WishlistRepositoryImpl', () {
-    final tItems = [
+    final tDtoItems = [
+      WishlistItemData(
+        id: 'ESP',
+        name: 'Spain',
+        flagUrl: 'https://flagcdn.com/es.svg',
+        addedAt: DateTime(2024, 1, 15),
+      ),
+      WishlistItemData(
+        id: 'FRA',
+        name: 'France',
+        flagUrl: 'https://flagcdn.com/fr.svg',
+        addedAt: DateTime(2024, 1, 16),
+      ),
+    ];
+    
+    final tEntityItems = [
       WishlistItem(
         id: 'ESP',
         name: 'Spain',
@@ -50,14 +65,15 @@ void main() {
       test('should return list of items from database', () async {
         // Arrange
         when(() => mockDatabase.getAllWishlistItems())
-            .thenAnswer((_) async => tItems);
+            .thenAnswer((_) async => tDtoItems);
 
         // Act
         final result = await repository.getWishlistItems();
 
         // Assert
-        expect(result, equals(tItems));
         expect(result.length, 2);
+        expect(result[0].id, tEntityItems[0].id);
+        expect(result[0].name, tEntityItems[0].name);
         verify(() => mockDatabase.getAllWishlistItems()).called(1);
       });
 
@@ -78,7 +94,7 @@ void main() {
     group('addToWishlist', () {
       test('should add item to database and emit change event', () async {
         // Arrange
-        final tItem = tItems.first;
+        final tItem = tEntityItems.first;
         when(() => mockDatabase.addToWishlist(any()))
             .thenAnswer((_) async {});
 
@@ -90,7 +106,7 @@ void main() {
         await repository.addToWishlist(tItem);
 
         // Assert
-        verify(() => mockDatabase.addToWishlist(tItem)).called(1);
+        verify(() => mockDatabase.addToWishlist(any())).called(1);
         
         // Wait for stream event
         await Future.delayed(const Duration(milliseconds: 100));

@@ -1,6 +1,8 @@
 import 'package:euro_list/features/countries/domain/entities/country.dart';
 import 'package:euro_list/features/countries/domain/repositories/country_repository.dart';
 
+//Usecase para obtener el pais europeo
+
 class GetEuropeanCountries {
 
   const GetEuropeanCountries({required this.repository});

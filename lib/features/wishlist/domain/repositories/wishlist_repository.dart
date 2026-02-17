@@ -1,5 +1,7 @@
 import 'package:euro_list/features/wishlist/domain/entities/wishlist_item.dart';
 
+//Interfaz para la wishlist
+
 abstract class WishlistRepository {
 
   Stream<WishlistChangeEvent> get wishlistChanges;

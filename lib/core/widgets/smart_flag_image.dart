@@ -16,7 +16,6 @@ class SmartFlagImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (imageUrl.toLowerCase().endsWith('.svg')) {
-      // Para SVG, usar Image.network simple
       return Image.network(
         imageUrl,
         width: width,
@@ -28,7 +27,6 @@ class SmartFlagImage extends StatelessWidget {
       );
     }
 
-    // Para PNG/JPG usar cached_network_image
     return CachedNetworkImage(
       imageUrl: imageUrl,
       width: width,

@@ -15,7 +15,6 @@ import 'package:get_it/get_it.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  // External dependencies
   final api = RestCountriesApi();
   final database = AppDatabase();
 
@@ -31,11 +30,11 @@ Future<void> init() async {
       () => WishlistRepositoryImpl(database: sl()),
     )
 
-    // Use cases - Countries
+    // Use cases para Countries
     ..registerLazySingleton(() => GetEuropeanCountries(repository: sl()))
     ..registerLazySingleton(() => GetCountryDetails(repository: sl()))
     
-    // Use cases - Wishlist
+    // Use cases para Wishlist
     ..registerLazySingleton(() => GetWishlistItems(repository: sl()))
     ..registerLazySingleton(() => AddToWishlist(repository: sl()))
     ..registerLazySingleton(() => RemoveFromWishlist(repository: sl()))

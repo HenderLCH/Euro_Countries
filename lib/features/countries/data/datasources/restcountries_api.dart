@@ -3,6 +3,8 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_db_store/dio_cache_interceptor_db_store.dart';
 import 'package:path_provider/path_provider.dart';
 
+
+//API para obtener los paises europeos
 class RestCountriesApi {
   late final Dio _dio;
   late final CacheStore _cacheStore;
@@ -15,6 +17,8 @@ class RestCountriesApi {
     final dir = await getTemporaryDirectory();
     _cacheStore = DbCacheStore(databasePath: dir.path);
 
+    //Configuracion de la cache
+    
     final cacheOptions = CacheOptions(
       store: _cacheStore,
       policy: CachePolicy.forceCache,
@@ -32,12 +36,15 @@ class RestCountriesApi {
       ..interceptors.add(DioCacheInterceptor(options: cacheOptions));
   }
 
+  //Metodo para obtener solamente los paises europeos
+
   Future<List<dynamic>> getEuropeanCountries() async {
     final response = await _dio.get('/region/europe');
     return response.data as List<dynamic>;
   }
 
   // Usa /name/{name} NO /translation/{nombre}
+  //Metodo para obtener un pais por nombre
   Future<dynamic> getCountryByName(String name) async {
     final response = await _dio.get('/name/$name');
     final data = response.data as List<dynamic>;

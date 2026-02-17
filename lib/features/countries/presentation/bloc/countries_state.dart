@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:euro_list/features/countries/domain/entities/country.dart';
 
+//Estados para el bloc de loa paises europeos
+
 abstract class CountriesState extends Equatable {
   const CountriesState();
 

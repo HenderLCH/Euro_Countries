@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:euro_list/features/countries/domain/entities/country.dart';
 
+// Estados para el bloc de los detalles por pais
+
 abstract class CountryDetailState extends Equatable {
   const CountryDetailState();
 

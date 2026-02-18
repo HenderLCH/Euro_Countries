@@ -64,24 +64,25 @@ class CountryCard extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       country.name,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       country.capital ?? 'No capital',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         color: Colors.grey[600],
                       ),
                       maxLines: 1,
@@ -90,31 +91,38 @@ class CountryCard extends StatelessWidget {
                     const Spacer(),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          context.read<CountriesCubit>().toggleWishlist(
-                            country.id,
-                            country.name,
-                            country.flagUrl,
-                          );
-                        },
-                        icon: Icon(
-                          isInWishlist ? Icons.check : Icons.add,
-                          size: 16,
-                        ),
-                        label: Text(
-                          isInWishlist ? 'Added' : 'Add to Wishlist',
-                          style: const TextStyle(fontSize: 11),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 8,
+                      height: 36,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.center,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            context.read<CountriesCubit>().toggleWishlist(
+                              country.id,
+                              country.name,
+                              country.flagUrl,
+                            );
+                          },
+                          icon: Icon(
+                            isInWishlist ? Icons.check : Icons.add,
+                            size: 14,
                           ),
-                          backgroundColor: isInWishlist 
-                            ? Colors.green 
-                            : Colors.orange,
-                          foregroundColor: Colors.white,
+                          label: Text(
+                            isInWishlist ? 'Added' : 'Add to Wishlist',
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            backgroundColor: isInWishlist
+                                ? Colors.green
+                                : Colors.orange,
+                            foregroundColor: Colors.white,
+                          ),
                         ),
                       ),
                     ),

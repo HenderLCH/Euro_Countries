@@ -6,11 +6,12 @@ import 'package:path_provider/path_provider.dart';
 
 //API para obtener los paises europeos
 class RestCountriesApi {
-  late final Dio _dio;
-  late final CacheStore _cacheStore;
+  late Dio _dio;
+  late CacheStore _cacheStore;
+  late Future<void> _initFuture;
 
   RestCountriesApi() {
-    _initializeDio();
+    _initFuture = _initializeDio();
   }
 
   Future<void> _initializeDio() async {
@@ -36,9 +37,14 @@ class RestCountriesApi {
       ..interceptors.add(DioCacheInterceptor(options: cacheOptions));
   }
 
+  Future<void> _ensureInitialized() async {
+    await _initFuture;
+  }
+
   //Metodo para obtener solamente los paises europeos
 
   Future<List<dynamic>> getEuropeanCountries() async {
+    await _ensureInitialized();
     final response = await _dio.get('/region/europe');
     return response.data as List<dynamic>;
   }
@@ -46,12 +52,14 @@ class RestCountriesApi {
   // Usa /name/{name} NO /translation/{nombre}
   //Metodo para obtener un pais por nombre
   Future<dynamic> getCountryByName(String name) async {
+    await _ensureInitialized();
     final response = await _dio.get('/name/$name');
     final data = response.data as List<dynamic>;
     return data.first;
   }
 
-  void dispose() {
+  Future<void> dispose() async {
+    await _ensureInitialized();
     _cacheStore.close();
     _dio.close();
   }

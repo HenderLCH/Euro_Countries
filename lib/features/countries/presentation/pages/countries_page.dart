@@ -83,8 +83,8 @@ class _CountriesPageState extends State<CountriesPage> {
                 padding: const EdgeInsets.all(16),
                 cacheExtent: 1000,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 5,
-                  childAspectRatio: 0.75,
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.65,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),

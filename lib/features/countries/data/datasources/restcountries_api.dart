@@ -49,7 +49,7 @@ class RestCountriesApi {
     return response.data as List<dynamic>;
   }
 
-  // Usa /name/{name} NO /translation/{nombre}
+  // Usa /name/{name} NO /translation/{nombre} para evitar multiples resultados
   //Metodo para obtener un pais por nombre
   Future<dynamic> getCountryByName(String name) async {
     await _ensureInitialized();
